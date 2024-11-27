@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useAtom } from 'jotai'
 import {
   locationAtom,
   meetingIdAtom,
 } from '../store/atom'
 import { getStorage, setStorage, delStorage, setStorageStream, setStorageMeeting } from '../lib/storage'
-import { newRoom, newUser, setApiToken, setRoomId } from '../lib/api'
+import { newUser, setApiToken, setRoomId } from '../lib/api'
 
 export default function Join() {
-  const [loc, setLoc] = useAtom(locationAtom)
+  const [, setLoc] = useAtom(locationAtom)
   const [__, setAtomMeetingId] = useAtom(meetingIdAtom)
   //const [tmpId, setTmpId] = useState<string>('')
   const [selectedRoom, setSelectedRoom] = useState<string>('') // 用于存储选择的房间号
@@ -30,13 +30,6 @@ export default function Join() {
 
     setApiToken(user.token)
     if (user.stream) setStorageStream(user.stream)
-  }
-
-  const newMeeting = async () => {
-    await getLoginStatus()
-    const meetingId = (await newRoom()).roomId
-    enterMeeting(meetingId)
-    setRoomId(meetingId)
   }
 
   const joinMeeting = async () => {
