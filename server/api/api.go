@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	woomMiddleware "woom/server/api/middleware"
-	"woom/server/api/v1"
+	v1 "woom/server/api/v1"
 	"woom/server/helper"
 	"woom/static"
 
@@ -52,6 +52,7 @@ func NewApi(rdb *redis.Client, secret string, live777Url string, live777Token st
 	})
 
 	r.Post("/user/", handle.CreateUser)
+	r.Post("/login/", handle.HandleLogin)
 
 	//r.Post("/room/{roomId}/message", handle.CreateMessage)
 	//r.Get("/room/{roomId}/message", handle.ShowMessage)

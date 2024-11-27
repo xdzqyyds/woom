@@ -44,6 +44,15 @@ speakerStatusAtom.debugLabel = 'speakerStatus'
 const settingsEnabledScreenAtom = atom<boolean>(/Mobi|Android|iPhone|iPad|HarmonyOS|HMSCore/i.test(navigator.userAgent))
 settingsEnabledScreenAtom.debugLabel = 'settingsEnabledScreen'
 
+const userIdAtom = atom<string>('')
+userIdAtom.debugLabel = 'userIdAtom'
+
+const userPasswordAtom = atom<string>('')
+userPasswordAtom.debugLabel = 'userPasswordAtom'
+
+const isLoggedInAtom = atom<boolean>(false)
+isLoggedInAtom.debugLabel = 'isLoggedInAtom'
+
 export {
   locationAtom,
   presentationStreamAtom,
@@ -55,6 +64,10 @@ export {
   speakerStatusAtom,
 
   settingsEnabledScreenAtom,
+
+  userIdAtom,
+  userPasswordAtom,
+  isLoggedInAtom,
 }
 
 export type {
