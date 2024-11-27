@@ -10,7 +10,14 @@ import { newRoom, newUser, setApiToken, setRoomId } from '../lib/api'
 export default function Join() {
   const [loc, setLoc] = useAtom(locationAtom)
   const [__, setAtomMeetingId] = useAtom(meetingIdAtom)
-  const [tmpId, setTmpId] = useState<string>('')
+  //const [tmpId, setTmpId] = useState<string>('')
+  const [selectedRoom, setSelectedRoom] = useState<string>('') // 用于存储选择的房间号
+
+  const roomOptions = [
+    { name: 'room 1', id: '10001' },
+    { name: 'room 2', id: '10002' },
+    { name: 'room 3', id: '10003' },
+  ]
 
   const getLoginStatus = async () => {
     const user = getStorage()
@@ -34,7 +41,7 @@ export default function Join() {
 
   const joinMeeting = async () => {
     await getLoginStatus()
-    const meetingId = tmpId
+    const meetingId = selectedRoom
     //await fetch(`/room/${meetingId}`, {
     //  method: "PATCH"
     //})
@@ -48,18 +55,18 @@ export default function Join() {
     setLoc(prev => ({ ...prev, pathname: `/${meetingId}` }))
   }
 
-  useEffect(() => {
-    const id = loc.pathname?.replace('/', '')
-    if (id) {
-      setTmpId(id)
-    }
-  }, [location])
+  //useEffect(() => {
+  //  const id = loc.pathname?.replace('/', '')
+  //  if (id) {
+  //    setTmpId(id)
+  //  }
+  //}, [location])
 
   return (
     <div className="flex flex-col justify-around bg-gray-800/80 p-6 my-4">
       <center className="flex flex-row flex-wrap justify-center">
-        <button className="btn-primary my-2" disabled={!!tmpId} onClick={() => { newMeeting() }}>New Meeting</button>
-        <div className="mx-2 my-2">
+        {/*<button className="btn-primary my-2" disabled={!!tmpId} onClick={() => { newMeeting() }}>New Meeting</button>*/}
+        {/*<div className="mx-2 my-2">
           <input
             className="text-center text-4xl"
             placeholder="Enter Meeting id"
@@ -67,9 +74,26 @@ export default function Join() {
             onChange={e => setTmpId(e.target.value)}
             maxLength={11}
           />
+        </div>*/}
+        <div className="mx-2 my-2">
+          <select
+            className="text-center font-semibold text-lg py-2 px-4 border rounded-md"
+            value={selectedRoom}
+            onChange={e => setSelectedRoom(e.target.value)}
+            style={{ color: selectedRoom ? 'black' : '#3b82f6' }} // 动态颜色
+          >
+            <option value="" disabled hidden style={{ color: '#3b82f6' }}>
+              Select a room
+            </option>
+            {roomOptions.map(room => (
+              <option key={room.id} value={room.id}>
+                {room.name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <button className="btn-primary my-2" disabled={!tmpId} onClick={() => { joinMeeting() }}>Join</button>
+        <button className="btn-primary my-2" disabled={!selectedRoom} onClick={() => { joinMeeting() }}>Join</button>
       </center>
       <center className="flex flex-row flex-wrap justify-center text-white">
         <p>If have some problems, Please click this:</p>
