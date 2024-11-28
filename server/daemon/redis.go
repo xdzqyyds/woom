@@ -22,23 +22,18 @@ func initUserData(rdb *redis.Client) {
 	// Redis hash
 	userStorageKey := "user_storage"
 
-	// users_storage
-	users := map[string]map[string]string{
-		"a": {"password": "aaa"},
-		"b": {"password": "bbb"},
-		"c": {"password": "ccc"},
-		"d": {"password": "ddd"},
+	// users storage with key as username and value as password
+	users := map[string]string{
+		"a": "aaa",
+		"b": "bbb",
+		"c": "ccc",
+		"d": "ddd",
 	}
 
 	// add to Redis
-	for user, fields := range users {
-		for key, value := range fields {
-			fullKey := user + "." + key
-			if err := rdb.HSet(ctx, userStorageKey, fullKey, value).Err(); err != nil {
-				log.Printf("Failed to set user %s data: %v\n", user, err)
-			} else {
-				log.Printf("Set Redis key: %s, value: %s\n", fullKey, value)
-			}
+	for user, password := range users {
+		if err := rdb.HSet(ctx, userStorageKey, user, password).Err(); err != nil {
+			log.Printf("Failed to set user %s data: %v\n", user, err)
 		}
 	}
 }

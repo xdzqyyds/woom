@@ -34,11 +34,11 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// get password
 	ctx := context.Background()
-	passwordKey := loginReq.Username + ".password"
-	log.Printf("Attempting to fetch password for key: %s\n", passwordKey) // 增加调试日志
+	passwordKey := loginReq.Username
+	log.Printf("Attempting to fetch password for key: %s\n", passwordKey)
 	password, err := h.rdb.HGet(ctx, userStorageKey, passwordKey).Result()
 	if err != nil {
-		log.Printf("Failed to find password for key: %s, error: %v\n", passwordKey, err) // 增加调试日志
+		log.Printf("Failed to find password for key: %s, error: %v\n", passwordKey, err)
 		w.WriteHeader(http.StatusUnauthorized)
 		render.JSON(w, r, LoginResponse{Success: false, Message: "User not found"})
 		return
@@ -46,7 +46,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// verify password
 	if password != loginReq.Password {
-		log.Printf("Password mismatch: expected %s, got %s\n", password, loginReq.Password) // 增加调试日志
+		log.Printf("Password mismatch: expected %s, got %s\n", password, loginReq.Password)
 		w.WriteHeader(http.StatusUnauthorized)
 		render.JSON(w, r, LoginResponse{Success: false, Message: "Invalid password"})
 		return

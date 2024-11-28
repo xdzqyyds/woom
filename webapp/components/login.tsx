@@ -15,7 +15,6 @@ export default function Login() {
       setError('User ID and password cannot be empty')
       return
     }
-
     try {
       const response = await login(userId, password)
       if (response.success) {
