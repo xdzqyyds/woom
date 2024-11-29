@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+
+	"woom/server/model"
 )
 
 type LoginRequest struct {
@@ -29,14 +31,10 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redis hash key
-	userStorageKey := "user_storage"
-
 	// get password
 	ctx := context.Background()
 	passwordKey := loginReq.UserId
-	log.Printf("Attempting to fetch password for key: %s\n", passwordKey)
-	password, err := h.rdb.HGet(ctx, userStorageKey, passwordKey).Result()
+	password, err := h.rdb.HGet(ctx, model.UserStorageKey, passwordKey).Result()
 	if err != nil {
 		log.Printf("Failed to find password for key: %s, error: %v\n", passwordKey, err)
 		w.WriteHeader(http.StatusUnauthorized)
@@ -46,9 +44,15 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// verify password
 	if password != loginReq.Password {
-		log.Printf("Password mismatch: expected %s, got %s\n", password, loginReq.Password)
 		w.WriteHeader(http.StatusUnauthorized)
 		render.JSON(w, r, LoginResponse{Success: false, Message: "Invalid password"})
+		return
+	}
+
+	// Update user online status to true
+	if err := h.rdb.HSet(ctx, model.UserOnlineStatusKey, passwordKey, true).Err(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		render.JSON(w, r, LoginResponse{Success: false, Message: "Failed to update online status"})
 		return
 	}
 

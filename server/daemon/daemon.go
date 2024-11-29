@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"woom/server"
 	"woom/server/api"
+	"woom/server/model"
 
 	"github.com/caarlos0/env/v9"
 	"github.com/redis/go-redis/v9"
@@ -30,8 +31,8 @@ func Daemon(ctx context.Context) {
 	rdb := newRdbClient(cfg.RedisUrl)
 	log.Println(rdb)
 
-	clearRedis(rdb)
-	initUserData(rdb)
+	model.ClearRedis(rdb)
+	model.InitUserData(rdb)
 
 	handler := api.NewApi(rdb, cfg.Secret, cfg.Live777Url, cfg.Live777Token)
 
