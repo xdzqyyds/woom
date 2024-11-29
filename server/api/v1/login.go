@@ -10,7 +10,7 @@ import (
 )
 
 type LoginRequest struct {
-	Username string `json:"username"`
+	UserId   string `json:"userId"`
 	Password string `json:"password"`
 }
 
@@ -34,7 +34,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// get password
 	ctx := context.Background()
-	passwordKey := loginReq.Username
+	passwordKey := loginReq.UserId
 	log.Printf("Attempting to fetch password for key: %s\n", passwordKey)
 	password, err := h.rdb.HGet(ctx, userStorageKey, passwordKey).Result()
 	if err != nil {

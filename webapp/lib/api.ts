@@ -117,13 +117,13 @@ async function delStream(roomId: string, streamId: string): Promise<any> {
   })
 }
 
-async function login(username: string, password: string): Promise<{ success: boolean; message: string }> {
+async function login(userId: string, password: string): Promise<{ success: boolean; message: string }> {
   return (await fetch('/login/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ userId, password }),
   })).json()
 }
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAtom } from 'jotai'
 import { userIdAtom, userPasswordAtom, isLoggedInAtom } from '../store/atom'
 import Join from '../components/join'
+import { getLoginStatus } from '../components/join'
 import { login } from '../lib/api'
 
 export default function Login() {
@@ -20,6 +21,7 @@ export default function Login() {
       if (response.success) {
         setError(null)
         setIsLoggedIn(true)
+        await getLoginStatus()
       } else {
         setError(response.message || 'Login failed')
       }
