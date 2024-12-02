@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import { useAtom } from 'jotai'
 import { userIdAtom, userPasswordAtom, isLoggedInAtom } from '../store/atom'
-import Join from '../components/join'
-import UserList from '../components/userlist'
 import { getLoginStatus } from '../components/join'
 import { login } from '../lib/api'
 
 export default function Login() {
   const [userId, setUserId] = useAtom(userIdAtom)
   const [password, setPassword] = useAtom(userPasswordAtom)
-  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
+  const [, setIsLoggedIn] = useAtom(isLoggedInAtom)
   const [error, setError] = useState<string | null>(null)
 
   const handleLogin = async () => {
@@ -30,16 +28,6 @@ export default function Login() {
       setError('Network error or server unavailable')
     }
   }
-
-  if (isLoggedIn) {
-    return (
-      <div className="relative">
-        <Join />
-        <UserList />
-      </div>
-    )
-  }
-
 
   return (
     <div className="flex flex-col justify-around bg-gray-800/80 p-6 my-4 rounded-lg">
