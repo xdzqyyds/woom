@@ -39,7 +39,7 @@ export default function Login() {
       </div>
     )
   }
-  
+
 
   return (
     <div className="flex flex-col justify-around bg-gray-800/80 p-6 my-4 rounded-lg">

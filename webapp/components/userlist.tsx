@@ -12,20 +12,20 @@ export default function UserList() {
     } catch (error) {
       console.error('Failed to fetch user status:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchUserStatus();
+    fetchUserStatus()
     const interval = setInterval(fetchUserStatus, 5000)
     return () => clearInterval(interval)
   }, [])
 
   const sortedUserStatus = Object.keys(userStatus)
-    .sort((a, b) => (userStatus[b] === '1' ? 1 : -1)) 
+    .sort((_, b) => (userStatus[b] === '1' ? 1 : -1))
     .map((userId) => ({
       userId,
       status: userStatus[userId],
-    }));
+    }))
 
   return (
     <div className="relative">
@@ -34,9 +34,9 @@ export default function UserList() {
         className="absolute bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg"
       >
         {isOpen ? (
-          <span className="text-xl">▲</span> 
+          <span className="text-xl">▲</span>
         ) : (
-          <span className="text-xl">▼</span> 
+          <span className="text-xl">▼</span>
         )}
       </button>
 
@@ -63,5 +63,5 @@ export default function UserList() {
         </div>
       )}
     </div>
-  );
+  )
 }
