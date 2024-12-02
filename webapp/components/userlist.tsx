@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getUserOnlineStatus } from '../lib/api'
+import { getUserOnlineStatus, updateUserStatus } from '../lib/api'
+import { getStorage } from '../lib/storage'
 
 export default function UserList() {
   const [userStatus, setUserStatus] = useState<{ [userId: string]: string }>({})
@@ -18,6 +19,20 @@ export default function UserList() {
     fetchUserStatus()
     const interval = setInterval(fetchUserStatus, 5000)
     return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const cleanup = async () => {
+      const userId = getStorage()?.userId
+      updateUserStatus(userId, '0')
+    }
+
+    window.addEventListener('beforeunload', cleanup)
+    window.addEventListener('unload', cleanup)
+    return () => {
+      window.removeEventListener('beforeunload', cleanup)
+      window.removeEventListener('unload', cleanup)
+    }
   }, [])
 
   const sortedUserStatus = Object.keys(userStatus)

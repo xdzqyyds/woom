@@ -21,8 +21,7 @@ export default defineConfig({
       '^/whep/.*': 'http://localhost:7777',
       '^/room/.*': 'http://localhost:4000',
       '^/user/.*': 'http://localhost:4000',
-      '^/login/.*': 'http://localhost:4000',
-      '^/online/.*': 'http://localhost:4000',
+      '^/login/.*': 'http://localhost:4000'
     }
   },
   build: {

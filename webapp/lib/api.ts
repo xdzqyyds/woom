@@ -128,11 +128,25 @@ async function login(userId: string, password: string): Promise<{ success: boole
 }
 
 async function getUserOnlineStatus(): Promise<{ [userId: string]: string }> {
-  return (await fetch('/online/', {
+  return (await fetch('/login/userlist', {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
   })).json()
+}
+
+async function updateUserStatus(userId: string, status: string): Promise<void> {
+  await fetch('/login/offline', {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      userId,
+      status,
+    }),
+  })
 }
 
 
@@ -152,6 +166,7 @@ export {
 
   login,
   getUserOnlineStatus,
+  updateUserStatus,
 
   StreamState,
 }

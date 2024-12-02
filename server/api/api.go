@@ -43,7 +43,8 @@ func NewApi(rdb *redis.Client, secret string, live777Url string, live777Token st
 	r.Group(func(r chi.Router) {
 		r.Use(woomMiddleware.JWTAuth(secret))
 
-		r.Get("/online/", handle.GetUserOnlineStatus)
+		r.Get("/login/userlist", handle.UserList)
+		r.Patch("/login/offline", handle.UpdateUserList)
 		r.Post("/room/", handle.CreateRoom)
 		r.Get("/room/{roomId}", handle.ShowRoom)
 		//r.Patch("/room/{roomId}", handle.UpdateRoom)

@@ -9,7 +9,7 @@ interface Storage {
   stream?: string,
   token?: string,
   name?: string,
-  userId?: string,
+  userId: string,
 }
 
 function setStorageMeeting(value: string) { localStorage.setItem(MeetingKey, value) }
