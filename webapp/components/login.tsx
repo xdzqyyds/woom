@@ -3,6 +3,7 @@ import { useAtom } from 'jotai'
 import { userIdAtom, userPasswordAtom, isLoggedInAtom } from '../store/atom'
 import { getLoginStatus } from '../components/join'
 import { login } from '../lib/api'
+import { setStorage, getStorage } from '../lib/storage'
 
 export default function Login() {
   const [userId, setUserId] = useAtom(userIdAtom)
@@ -20,6 +21,9 @@ export default function Login() {
       if (response.success) {
         setError(null)
         setIsLoggedIn(true)
+        const user = getStorage()
+        user.userId = userId
+        setStorage(user)
         await getLoginStatus()
       } else {
         setError(response.message || 'Login failed')
