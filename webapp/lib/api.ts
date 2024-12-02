@@ -127,6 +127,15 @@ async function login(userId: string, password: string): Promise<{ success: boole
   })).json()
 }
 
+async function getUserOnlineStatus(): Promise<{ [userId: string]: string }> {
+  return (await fetch('/online/', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  })).json()
+}
+
+
 export {
   setRoomId,
   setApiToken,
@@ -142,6 +151,7 @@ export {
   delStream,
 
   login,
+  getUserOnlineStatus,
 
   StreamState,
 }

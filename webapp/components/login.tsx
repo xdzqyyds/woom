@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAtom } from 'jotai'
 import { userIdAtom, userPasswordAtom, isLoggedInAtom } from '../store/atom'
 import Join from '../components/join'
+import UserList from '../components/userlist'
 import { getLoginStatus } from '../components/join'
 import { login } from '../lib/api'
 
@@ -31,8 +32,14 @@ export default function Login() {
   }
 
   if (isLoggedIn) {
-    return <Join />
+    return (
+      <div className="relative">
+        <Join />
+        <UserList />
+      </div>
+    )
   }
+  
 
   return (
     <div className="flex flex-col justify-around bg-gray-800/80 p-6 my-4 rounded-lg">

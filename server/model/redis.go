@@ -49,14 +49,12 @@ func InitUserData(rdb *redis.Client) {
 func GenerateUsers() map[string]string {
 	users := make(map[string]string)
 
-	// 生成从 a 到 z 的用户名和密码
 	for i := 'a'; i <= 'z'; i++ {
 		userId := string(i)
 		password := userId + userId + userId
 		users[userId] = password
 	}
 
-	// 生成从 A 到 Z 的用户名和密码
 	for i := 'A'; i <= 'Z'; i++ {
 		userId := string(i)
 		password := userId + userId + userId
@@ -69,13 +67,11 @@ func GenerateUsers() map[string]string {
 func GenerateOnlineStatus() map[string]bool {
 	onlineStatus := make(map[string]bool)
 
-	// 生成从 a 到 z 的在线状态
 	for i := 'a'; i <= 'z'; i++ {
 		userId := string(i)
 		onlineStatus[userId] = false
 	}
 
-	// 生成从 A 到 Z 的在线状态
 	for i := 'A'; i <= 'Z'; i++ {
 		userId := string(i)
 		onlineStatus[userId] = false

@@ -21,7 +21,7 @@ type LoginResponse struct {
 	Message string `json:"message"`
 }
 
-func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq LoginRequest
 
 	// Decode JSON request body
