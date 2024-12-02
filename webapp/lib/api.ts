@@ -149,6 +149,20 @@ async function updateUserStatus(userId: string, status: string): Promise<void> {
   })
 }
 
+async function sendInvite(meetingId: string, inviterId: string, inviteeId: string): Promise<{ success: boolean; message: string }> {
+  return (await fetch('/invite', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      meetingId,
+      inviterId,
+      inviteeId,
+    }),
+  })).json()
+}
+
 
 export {
   setRoomId,
@@ -167,6 +181,7 @@ export {
   login,
   getUserOnlineStatus,
   updateUserStatus,
+  sendInvite,
 
   StreamState,
 }
