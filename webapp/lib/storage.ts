@@ -5,7 +5,7 @@ const NameKey = 'name'
 const UserId = 'userId'
 
 interface Storage {
-  meeting?: string,
+  meeting: string,
   stream?: string,
   token?: string,
   name?: string,

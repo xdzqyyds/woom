@@ -1,10 +1,14 @@
 import Login from '../components/login'
 import Join from '../components/join'
+import InviteWindow from '../components/window'
 import { useAtom } from 'jotai'
 import { isLoggedInAtom } from '../store/atom'
+import { getStorage } from '../lib/storage'
 
 export default function Welcome() {
   const [isLoggedIn] = useAtom(isLoggedInAtom)
+
+  const inviteeId = getStorage()?.userId
 
   return (
     <div className="flex flex-col justify-around min-h-screen">
@@ -16,7 +20,12 @@ export default function Welcome() {
         {
           !isLoggedIn
             ? <Login />
-            : <Join />
+            : (
+              <>
+                <Join />
+                <InviteWindow inviteeId={inviteeId} />
+              </>
+            )
         }
       </center>
     </div>

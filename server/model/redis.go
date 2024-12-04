@@ -10,6 +10,7 @@ import (
 const (
 	UserStorageKey      = "user_storage"
 	UserOnlineStatusKey = "user_online_status"
+	InvitationKey       = "invitation"
 )
 
 func ClearRedis(rdb *redis.Client) {
@@ -43,7 +44,6 @@ func InitUserData(rdb *redis.Client) {
 			log.Printf("Failed to set user %s online status: %v\n", user, err)
 		}
 	}
-
 }
 
 func GenerateUsers() map[string]string {

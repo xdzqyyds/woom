@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
+import { useAtom } from 'jotai'
 import { getUserOnlineStatus, updateUserStatus } from '../lib/api'
 import { getStorage } from '../lib/storage'
+import { meetingIdAtom } from '../store/atom'
+import Invite from './Invite'
 
 export default function UserList() {
   const [userStatus, setUserStatus] = useState<{ [userId: string]: string }>({})
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  const [meeting] = useAtom(meetingIdAtom)
+
+  const inviterId = getStorage()?.userId
+  const meetingId = getStorage()?.meeting
 
   const fetchUserStatus = async () => {
     try {
@@ -23,8 +31,7 @@ export default function UserList() {
 
   useEffect(() => {
     const cleanup = async () => {
-      const userId = getStorage()?.userId
-      updateUserStatus(userId, '0')
+      updateUserStatus(inviterId, '0')
     }
 
     window.addEventListener('beforeunload', cleanup)
@@ -62,6 +69,7 @@ export default function UserList() {
             {sortedUserStatus.map(({ userId, status }) => (
               <li key={userId} className="flex items-center justify-between space-x-1">
                 <span className="font-bold text-lg text-blue-600">{userId}</span>
+
                 <div className="flex items-center space-x-2">
                   {status === '1' ? (
                     <span className="text-green-500">✔️</span>
@@ -72,6 +80,16 @@ export default function UserList() {
                     {status === '1' ? 'Online' : 'Offline'}
                   </span>
                 </div>
+
+                {status === '1' && meeting ? (
+                  <Invite
+                    meetingId={meetingId}
+                    inviterId={inviterId}
+                    inviteeId={userId}
+                  />
+                ) : (
+                  <span className="text-gray-500">Disabled</span>
+                )}
               </li>
             ))}
           </ul>

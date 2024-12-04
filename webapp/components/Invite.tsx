@@ -28,7 +28,7 @@ export default function Invite({ meetingId, inviterId, inviteeId }: InviteProps)
     <div>
       <button
         onClick={handleInvite}
-        className={`bg-blue-500 text-white p-2 rounded-md ${isInvited ? 'bg-green-500' : ''}`}
+        className={`bg-blue-500 text-white p-2.8 rounded-md ${isInvited ? 'bg-green-500' : ''}`}
       >
         {isInvited ? 'Invited' : 'Invite'}
       </button>

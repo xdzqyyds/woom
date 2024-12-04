@@ -150,9 +150,10 @@ async function updateUserStatus(userId: string, status: string): Promise<void> {
 }
 
 async function sendInvite(meetingId: string, inviterId: string, inviteeId: string): Promise<{ success: boolean; message: string }> {
-  return (await fetch('/invite', {
+  return (await fetch('/login/invite', {
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -160,6 +161,17 @@ async function sendInvite(meetingId: string, inviterId: string, inviteeId: strin
       inviterId,
       inviteeId,
     }),
+  })).json()
+}
+
+async function getInvitation(inviteeId: string): Promise<string | null> {
+  return (await fetch('/login/invitee', {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ inviteeId }),
   })).json()
 }
 
@@ -182,6 +194,7 @@ export {
   getUserOnlineStatus,
   updateUserStatus,
   sendInvite,
+  getInvitation,
 
   StreamState,
 }
