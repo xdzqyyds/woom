@@ -164,7 +164,10 @@ async function sendInvite(meetingId: string, inviterId: string, inviteeId: strin
   })).json()
 }
 
-async function getInvitation(inviteeId: string): Promise<string | null> {
+interface InvitationResponse {
+  value: string;
+}
+async function getInvitation(inviteeId: string): Promise<InvitationResponse | null> {
   return (await fetch('/login/invitee', {
     method: 'PATCH',
     headers: {
