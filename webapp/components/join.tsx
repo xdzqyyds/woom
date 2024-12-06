@@ -11,7 +11,7 @@ export default function Join() {
   const [, setLoc] = useAtom(locationAtom)
   const [__, setAtomMeetingId] = useAtom(meetingIdAtom)
   //const [tmpId, setTmpId] = useState<string>('')
-  const [selectedRoom, setSelectedRoom] = useState<string>('') // 用于存储选择的房间号
+  const [selectedRoom, setSelectedRoom] = useState<string>('')
 
   const roomOptions = [
     { name: 'room 1', id: '10001' },
@@ -70,16 +70,16 @@ export default function Join() {
         </div>*/}
         <div className="mx-2 my-2">
           <select
-            className="text-center font-semibold text-lg py-2 px-4 border rounded-md"
+            className="text-center font-semibold text-lg py-2 px-4 border rounded-md bg-white shadow-md hover:border-blue-500 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-150 ease-in-out"
             value={selectedRoom}
             onChange={e => setSelectedRoom(e.target.value)}
-            style={{ color: selectedRoom ? 'black' : '#3b82f6' }} // 动态颜色
+            style={{ color: selectedRoom ? '#2d3748' : '#718096' }}
           >
-            <option value="" disabled hidden style={{ color: '#3b82f6' }}>
+            <option value="" disabled hidden style={{ color: '#718096' }}>
               Select a room
             </option>
             {roomOptions.map(room => (
-              <option key={room.id} value={room.id}>
+              <option key={room.id} value={room.id} className="text-gray-800">
                 {room.name}
               </option>
             ))}
