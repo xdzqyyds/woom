@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getInvitation } from '../../lib/api'
+import { getInvitation, setRoomId } from '../../lib/api'
 import { setStorageMeeting } from '../../lib/storage'
 import { useAtom } from 'jotai'
 import { locationAtom, meetingIdAtom } from '../../store/atom'
@@ -41,6 +41,7 @@ export default function InviteWindow({ inviteeId }: InviteWindowProps) {
       const roomId = invitationValue.split(' ')[0]
       setStorageMeeting(roomId)
       setAtomMeetingId(roomId)
+      setRoomId(roomId) // 添加这一行，设置全局roomId
       setLoc(prev => ({ ...prev, pathname: `/${roomId}` }))
       setIsOpen(false)
     }
