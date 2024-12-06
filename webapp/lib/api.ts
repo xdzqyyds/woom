@@ -133,8 +133,6 @@ export {
   delStream,
 
   StreamState,
-
-  token,
 }
 
 export type {
