@@ -2,7 +2,7 @@ import { useAtom } from 'jotai'
 import { meetingJoinedAtom } from '../store/atom'
 import Layout from '../components/layout'
 import Prepare from '../components/prepare'
-import InviteWindow from '../components/window'
+import InviteWindow from '../components/login/window'
 import { getStorage } from '../lib/storage'
 
 export default function Meeting(props: { meetingId: string }) {

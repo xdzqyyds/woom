@@ -2,7 +2,7 @@ import { useAtom } from 'jotai'
 import Welcome from './pages/welcome'
 import Meeting from './pages/meeting'
 import { meetingIdAtom, isLoggedInAtom } from './store/atom'
-import UserList from './components/userlist'
+import UserList from './components/login/userlist'
 
 export default function WOOM() {
   const [meetingId] = useAtom(meetingIdAtom)

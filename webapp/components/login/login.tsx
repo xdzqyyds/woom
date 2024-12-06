@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useAtom } from 'jotai'
-import { userIdAtom, userPasswordAtom, isLoggedInAtom } from '../store/atom'
-import { getLoginStatus } from '../components/join'
-import { login } from '../lib/api'
-import { setStorage, getStorage } from '../lib/storage'
+import { userIdAtom, userPasswordAtom, isLoggedInAtom } from '../../store/atom'
+import { getLoginStatus } from '../../components/join'
+import { login } from '../../lib/api'
+import { setStorage, getStorage } from '../../lib/storage'
 
 export default function Login() {
   const [userId, setUserId] = useAtom(userIdAtom)

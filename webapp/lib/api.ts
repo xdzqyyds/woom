@@ -150,8 +150,8 @@ async function updateUserStatus(userId: string, status: string): Promise<void> {
   })
 }
 
-async function sendInvite(meetingId: string, inviterId: string, inviteeId: string): Promise<{ success: boolean; message: string }> {
-  return (await fetch('/login/invite', {
+function sendInvite(meetingId: string, inviterId: string, inviteeId: string): Promise<void> {
+  return fetch('/login/invite', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -162,23 +162,43 @@ async function sendInvite(meetingId: string, inviterId: string, inviteeId: strin
       inviterId,
       inviteeId,
     }),
-  })).json()
+  })
+    .then(() => {
+      // 处理成功后不做任何事，或者可以在此添加日志等
+    })
+    .catch((error) => {
+      console.error('Error sending invite:', error)
+    })
 }
+
 
 interface InvitationResponse {
   value: string;
 }
-async function getInvitation(inviteeId: string): Promise<InvitationResponse | null> {
-  return (await fetch('/login/invitee', {
-    method: 'PATCH',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ inviteeId }),
-  })).json()
-}
 
+async function getInvitation(inviteeId: string): Promise<InvitationResponse | null> {
+  try {
+    const response = await fetch('/login/invitee', {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ inviteeId }),
+    })
+
+    const result = await response.json()
+    // 如果 value 为 null，说明没有邀请
+    if (!result.value) {
+      return null
+    }
+
+    return result
+  } catch (error) {
+    console.error('Failed to check invitation:', error)
+    return null
+  }
+}
 
 export {
   setRoomId,

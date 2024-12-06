@@ -1,6 +1,6 @@
-import Login from '../components/login'
+import Login from '../components/login/login'
 import Join from '../components/join'
-import InviteWindow from '../components/window'
+import InviteWindow from '../components/login/window'
 import { useAtom } from 'jotai'
 import { isLoggedInAtom } from '../store/atom'
 import { getStorage } from '../lib/storage'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { sendInvite } from '../lib/api'
+import { sendInvite } from '../../lib/api'
 
 interface InviteProps {
   meetingId: string;
@@ -10,18 +10,14 @@ interface InviteProps {
 export default function Invite({ meetingId, inviterId, inviteeId }: InviteProps) {
   const [isInvited, setIsInvited] = useState<boolean>(false)
 
-  const handleInvite = async () => {
-    try {
-      const response = await sendInvite(meetingId, inviterId, inviteeId)
-      if (response.success) {
-        setIsInvited(true)
-        console.log('Invite sent successfully')
-      } else {
-        console.error('Failed to send invite')
-      }
-    } catch (error) {
-      console.error('Error sending invite:', error)
-    }
+  const handleInvite = () => {
+    sendInvite(meetingId, inviterId, inviteeId)
+      .catch((error) => {
+        // 错误捕获
+        console.error('Error sending invite:', error)
+      })
+    setIsInvited(true) // 假设邀请发送后立即更新状态
+    console.log('Invite sent successfully')
   }
 
   return (

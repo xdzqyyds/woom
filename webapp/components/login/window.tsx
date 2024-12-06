@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { getInvitation } from '../lib/api'
-import { setStorageMeeting } from '../lib/storage'
+import { getInvitation } from '../../lib/api'
+import { setStorageMeeting } from '../../lib/storage'
 import { useAtom } from 'jotai'
-import { locationAtom, meetingIdAtom } from '../store/atom'
+import { locationAtom, meetingIdAtom } from '../../store/atom'
 
 interface InviteWindowProps {
   inviteeId: string
@@ -21,14 +21,11 @@ export default function InviteWindow({ inviteeId }: InviteWindowProps) {
   const checkInvitation = async () => {
     try {
       const value = await getInvitation(inviteeId)
-      console.log('checkInvitation', value)
       if (value) {
         setInvitation(value)
         setIsOpen(true)
       }
-    } catch (error) {
-      console.error('Failed to check invitation:', error)
-    }
+    } catch {/* empty */ }
   }
 
   useEffect(() => {

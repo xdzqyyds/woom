@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useAtom } from 'jotai'
-import { getUserOnlineStatus, updateUserStatus } from '../lib/api'
-import { getStorage } from '../lib/storage'
-import { meetingIdAtom } from '../store/atom'
+import { getUserOnlineStatus, updateUserStatus } from '../../lib/api'
+import { getStorage } from '../../lib/storage'
+import { meetingIdAtom } from '../../store/atom'
 import Invite from './Invite'
 
 export default function UserList() {
