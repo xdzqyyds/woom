@@ -36,7 +36,7 @@ func InitUserData(rdb *redis.Client) {
 	}
 
 	// online status storage with key as userId and value as online status
-	onlineStatus := GenerateOnlineStatus()
+	onlineStatus := GenerateOnlineStatus(rdb)
 
 	// add to Redis
 	for user, status := range onlineStatus {
@@ -64,17 +64,20 @@ func GenerateUsers() map[string]string {
 	return users
 }
 
-func GenerateOnlineStatus() map[string]bool {
-	onlineStatus := make(map[string]bool)
+func GenerateOnlineStatus(rdb *redis.Client) map[string]string {
+	ctx := context.Background()
+	onlineStatus := make(map[string]string)
 
-	for i := 'a'; i <= 'z'; i++ {
-		userId := string(i)
-		onlineStatus[userId] = false
+	// Get all users from user_storage
+	users, err := rdb.HKeys(ctx, UserStorageKey).Result()
+	if err != nil {
+		log.Printf("Failed to get users from Redis: %v\n", err)
+		return onlineStatus
 	}
 
-	for i := 'A'; i <= 'Z'; i++ {
-		userId := string(i)
-		onlineStatus[userId] = false
+	// Initialize online status for each user
+	for _, userId := range users {
+		onlineStatus[userId] = "0"
 	}
 
 	return onlineStatus

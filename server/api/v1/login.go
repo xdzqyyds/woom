@@ -12,7 +12,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// Login related structs
 type LoginRequest struct {
 	UserId   string `json:"userId"`
 	Password string `json:"password"`
@@ -23,7 +22,6 @@ type LoginResponse struct {
 	Message string `json:"message"`
 }
 
-// Invite related structs
 type InviteRequest struct {
 	MeetingId string `json:"meetingId"`
 	InviterId string `json:"inviterId"`
@@ -39,13 +37,11 @@ type GetInvitationRequest struct {
 	InviteeId string `json:"inviteeId"`
 }
 
-// UserList related structs
 type UpdateUserStatusRequest struct {
 	UserID string `json:"userId"`
 	Status string `json:"status"`
 }
 
-// Login handler
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq LoginRequest
 
@@ -57,6 +53,21 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 	passwordKey := loginReq.UserId
+
+	onlineStatus, err := h.rdb.HGet(ctx, model.UserOnlineStatusKey, passwordKey).Result()
+	if err != nil && err != redis.Nil {
+		log.Printf("Failed to get online status for user: %s, error: %v\n", passwordKey, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		render.JSON(w, r, LoginResponse{Success: false, Message: "Failed to check online status"})
+		return
+	}
+
+	if onlineStatus == "1" {
+		w.WriteHeader(http.StatusConflict)
+		render.JSON(w, r, LoginResponse{Success: false, Message: "User already logged in"})
+		return
+	}
+
 	password, err := h.rdb.HGet(ctx, model.UserStorageKey, passwordKey).Result()
 	if err != nil {
 		log.Printf("Failed to find password for key: %s, error: %v\n", passwordKey, err)
@@ -71,7 +82,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.rdb.HSet(ctx, model.UserOnlineStatusKey, passwordKey, true).Err(); err != nil {
+	if err := h.rdb.HSet(ctx, model.UserOnlineStatusKey, passwordKey, "1").Err(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		render.JSON(w, r, LoginResponse{Success: false, Message: "Failed to update online status"})
 		return
@@ -80,7 +91,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, LoginResponse{Success: true, Message: "Login successful"})
 }
 
-// Invite handlers
 func (h *Handler) Invite(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -122,7 +132,6 @@ func (h *Handler) GetInvitation(w http.ResponseWriter, r *http.Request) {
 
 	value, err := h.rdb.HGet(ctx, model.InvitationKey, reqBody.InviteeId).Result()
 	if err == redis.Nil {
-		// 没有找到邀请，返回空结果但要确保返回正确的 JSON 格式
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -146,7 +155,6 @@ func (h *Handler) GetInvitation(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// UserList handlers
 func (h *Handler) UserList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	onlineStatus, err := h.rdb.HGetAll(ctx, model.UserOnlineStatusKey).Result()

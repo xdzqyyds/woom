@@ -13,10 +13,9 @@ export default function Invite({ meetingId, inviterId, inviteeId }: InviteProps)
   const handleInvite = () => {
     sendInvite(meetingId, inviterId, inviteeId)
       .catch((error) => {
-        // 错误捕获
         console.error('Error sending invite:', error)
       })
-    setIsInvited(true) // 假设邀请发送后立即更新状态
+    setIsInvited(true)
     console.log('Invite sent successfully')
   }
 

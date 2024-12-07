@@ -81,7 +81,7 @@ export default function UserList() {
                   </span>
                 </div>
 
-                {status === '1' && meeting ? (
+                {status === '1' && meeting && userId !== inviterId ? (
                   <Invite
                     meetingId={meetingId}
                     inviterId={inviterId}
