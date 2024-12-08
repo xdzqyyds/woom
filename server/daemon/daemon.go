@@ -18,7 +18,21 @@ func newRdbClient(url string) *redis.Client {
 		panic(err)
 	}
 
-	return redis.NewClient(opts)
+	client := redis.NewClient(opts)
+
+	// Configure RDB and AOF backup
+	ctx := context.Background()
+	if err := client.ConfigSet(ctx, "save", "900 1 300 10 60 10000").Err(); err != nil {
+		log.Printf("Failed to set RDB: %v\n", err)
+	}
+	if err := client.ConfigSet(ctx, "appendonly", "yes").Err(); err != nil {
+		log.Printf("Failed to set AOF: %v\n", err)
+	}
+	if err := client.ConfigSet(ctx, "appendfsync", "everysec").Err(); err != nil {
+		log.Printf("Failed to set AOF sync: %v\n", err)
+	}
+
+	return client
 }
 
 func Daemon(ctx context.Context) {
@@ -31,7 +45,7 @@ func Daemon(ctx context.Context) {
 	rdb := newRdbClient(cfg.RedisUrl)
 	log.Println(rdb)
 
-	model.ClearRedis(rdb)
+	//model.ClearRedis(rdb)
 	model.InitUserData(rdb)
 
 	handler := api.NewApi(rdb, cfg.Secret, cfg.Live777Url, cfg.Live777Token)

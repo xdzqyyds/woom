@@ -57,6 +57,7 @@ func NewApi(rdb *redis.Client, secret string, live777Url string, live777Token st
 
 	r.Post("/user/", handle.CreateUser)
 	r.Post("/login/", handle.Login)
+	r.Post("/login/signup", handle.Signup)
 
 	//r.Post("/room/{roomId}/message", handle.CreateMessage)
 	//r.Get("/room/{roomId}/message", handle.ShowMessage)

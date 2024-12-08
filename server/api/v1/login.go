@@ -184,3 +184,53 @@ func (h *Handler) UpdateUserList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
+	var signupReq LoginRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&signupReq); err != nil {
+		log.Printf("Error decoding signup request: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		render.JSON(w, r, LoginResponse{Success: false, Message: "Invalid request format"})
+		return
+	}
+
+	// User input cannot be empty
+	if signupReq.UserId == "" || signupReq.Password == "" {
+		render.JSON(w, r, LoginResponse{Success: false, Message: "User ID and password cannot be empty"})
+		return
+	}
+
+	ctx := context.Background()
+
+	// Check whether the user name already exists
+	exists, err := h.rdb.HExists(ctx, model.UserStorageKey, signupReq.UserId).Result()
+	if err != nil {
+		log.Printf("Error checking user existence: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		render.JSON(w, r, LoginResponse{Success: false, Message: "Internal server error"})
+		return
+	}
+
+	if exists {
+		render.JSON(w, r, LoginResponse{Success: false, Message: "This user ID is already registered"})
+		return
+	}
+
+	// Execute multiple Redis commands using pipes
+	pipe := h.rdb.Pipeline()
+
+	pipe.HSet(ctx, model.UserStorageKey, signupReq.UserId, signupReq.Password)
+	pipe.HSet(ctx, model.UserOnlineStatusKey, signupReq.UserId, "0")
+
+	_, err = pipe.Exec(ctx)
+	if err != nil {
+		log.Printf("Error executing pipeline for user registration: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		render.JSON(w, r, LoginResponse{Success: false, Message: "Failed to register user"})
+		return
+	}
+
+	log.Printf("New user registered successfully: %s\n", signupReq.UserId)
+	render.JSON(w, r, LoginResponse{Success: true, Message: "Registration successful! You can now login."})
+}

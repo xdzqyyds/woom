@@ -200,6 +200,17 @@ async function getInvitation(inviteeId: string): Promise<InvitationResponse | nu
   }
 }
 
+async function signup(userId: string, password: string): Promise<{ success: boolean; message: string }> {
+  const response = await fetch('/login/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, password }),
+  })
+  return response.json()
+}
+
 export {
   setRoomId,
   setApiToken,
@@ -219,6 +230,7 @@ export {
   updateUserStatus,
   sendInvite,
   getInvitation,
+  signup,
 
   StreamState,
 }

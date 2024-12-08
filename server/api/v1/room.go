@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"context"
 	"net/http"
 
 	"woom/server/helper"
@@ -26,17 +25,17 @@ func (h *Handler) CreateRoom(w http.ResponseWriter, r *http.Request) {
 		Presenter: "",
 		Locked:    false,
 	}
-	gobAdmin, err := helper.GobEncode(&admin)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	if err := h.rdb.HSet(context.TODO(), roomId, model.AdminUniqueKey, gobAdmin).Err(); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
+	// gobAdmin, err := helper.GobEncode(&admin)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	w.Write([]byte(err.Error()))
+	// 	return
+	// }
+	// if err := h.rdb.HSet(context.TODO(), roomId, model.AdminUniqueKey, gobAdmin).Err(); err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	w.Write([]byte(err.Error()))
+	// 	return
+	// }
 
 	//if _, err := h.helperCreateRoomStream(r, roomId, streamId); err != nil {
 	//	w.WriteHeader(http.StatusInternalServerError)
