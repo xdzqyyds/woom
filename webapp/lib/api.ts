@@ -164,7 +164,6 @@ function sendInvite(meetingId: string, inviterId: string, inviteeId: string): Pr
     }),
   })
     .then(() => {
-      // 处理成功后不做任何事，或者可以在此添加日志等
     })
     .catch((error) => {
       console.error('Error sending invite:', error)
@@ -188,7 +187,7 @@ async function getInvitation(inviteeId: string): Promise<InvitationResponse | nu
     })
 
     const result = await response.json()
-    // 如果 value 为 null，说明没有邀请
+
     if (!result.value) {
       return null
     }

@@ -52,4 +52,6 @@ func Daemon(ctx context.Context) {
 
 	log.Println("=== started ===")
 	log.Panicln(http.ListenAndServe(":"+cfg.Port, handler))
+	//log.Println("=== HTTPS server started ===")
+	//log.Panicln(http.ListenAndServeTLS(":"+cfg.Port, cfg.CertFile, cfg.KeyFile, handler))
 }

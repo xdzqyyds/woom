@@ -6,4 +6,6 @@ type Config struct {
 	RedisUrl     string `env:"REDIS_URL" envDefault:"redis://localhost:6379/0"`
 	Live777Url   string `env:"LIVE777_URL" envDefault:"http://localhost:7777"`
 	Live777Token string `env:"LIVE777_TOKEN" envDefault:""`
+	CertFile     string `env:"CERT_FILE" envDefault:"certs/server.crt"`
+	KeyFile      string `env:"KEY_FILE" envDefault:"certs/server.key"`
 }
