@@ -116,8 +116,32 @@ export default function DeviceBar(props: { streamId: string }) {
     setDeviceVideo(settingsEnabledScreen ? [...videos] : [...videos, deviceScreen])
   }
 
+  const requestAndroidPermissions = () => {
+    //@ts-expect-error 因为 plus 是特定平台的全局对象
+    if (typeof window.plus !== 'undefined') {
+      //@ts-expect-error 因为 plus 是特定平台的全局对象
+      plus.android.requestPermissions(['android.permission.CAMERA', 'android.permission.RECORD_AUDIO'], function(e) {
+        // 如果权限被永久拒绝
+        if (e.deniedAlways.length > 0) {
+          alert('相机权限被永久拒绝，请在设置中手动授予权限。')
+        }
+
+        // 如果权限被临时拒绝
+        if (e.deniedPresent.length > 0) {
+          alert('相机权限被临时拒绝，重启应用尝试再次请求权限。')
+        }
+
+      }, function(error:unknown) {
+        alert('请求相机权限时出错: ' + JSON.stringify(error))
+      })
+    } else {
+      console.warn('plus 对象在当前环境下不可用。请在真机环境中运行。')
+    }
+  }
+
   const init = async () => {
     try {
+      requestAndroidPermissions();
       (await navigator.mediaDevices.getUserMedia({ video: true, audio: true })).getTracks().map(track => track.stop())
       // NOTE:
       // In some device have problem:
@@ -126,10 +150,12 @@ export default function DeviceBar(props: { streamId: string }) {
       await permissionsQuery()
     } catch {
       try {
+        requestAndroidPermissions();
         (await navigator.mediaDevices.getUserMedia({ audio: true })).getTracks().map(track => track.stop())
         await permissionsQuery()
       } catch { /* empty */ }
       try {
+        requestAndroidPermissions();
         (await navigator.mediaDevices.getUserMedia({ video: true })).getTracks().map(track => track.stop())
         await permissionsQuery()
       } catch { /* empty */ }
