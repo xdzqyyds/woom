@@ -30,15 +30,26 @@ export default function UserList() {
   }, [])
 
   useEffect(() => {
-    const cleanup = async () => {
+    const cleanup = () => {
       updateUserStatus(inviterId, '0')
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        cleanup()
+      }
     }
 
     window.addEventListener('beforeunload', cleanup)
     window.addEventListener('unload', cleanup)
+    window.addEventListener('pagehide', cleanup)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     return () => {
       window.removeEventListener('beforeunload', cleanup)
       window.removeEventListener('unload', cleanup)
+      window.removeEventListener('pagehide', cleanup)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 

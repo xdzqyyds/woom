@@ -9,6 +9,7 @@ import {
   enabledPresentationAtom,
   meetingJoinedAtom,
   presentationStreamAtom,
+  meetingIdAtom,
 } from '../store/atom'
 import copy from 'copy-to-clipboard'
 import SvgDone from './svg/done'
@@ -27,6 +28,7 @@ export default function Layout(props: { meetingId: string }) {
   //const [speakerId, setSpeakerId] = useState<string>("")
   const [enabledPresentation] = useAtom(enabledPresentationAtom)
   const [presentationStream] = useAtom(presentationStreamAtom)
+  const [__, setMeetingId] = useAtom(meetingIdAtom)
 
   const refresh = async () => {
     const data = (await getRoom(props.meetingId)).streams
@@ -49,28 +51,30 @@ export default function Layout(props: { meetingId: string }) {
     delStream(props.meetingId, localStreamId)
 
     setMeetingJoined(false)
+    setMeetingId('')
   }
 
   useEffect(() => {
     const cleanup = () => {
       delStream(props.meetingId, localStreamId)
     }
-    // NOTE:
-    // https://github.com/binbat/woom/pull/27
-    // https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event
-    // `unload` event is Deprecated, But Firefox need `unload`
-    //
-    // event                        | Chrome                    | Firefox                   | Safari
-    // ---------------------------- | ------------------------- | ------------------------- | -----
-    // `beforeunload`               | ok                        | console error, no request | console error, request ok
-    // `unload`                     | console error, no request | ok                        | console no request log, no request
-    // `beforeunload` + `keepalive` | ok                        | console error, no request | console error, request ok
-    // `unload` +  `keepalive`      | console error, request ok | ok                        | console no request log, request ok
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        cleanup()
+      }
+    }
+
     window.addEventListener('beforeunload', cleanup)
     window.addEventListener('unload', cleanup)
+    window.addEventListener('pagehide', cleanup)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
     return () => {
       window.removeEventListener('beforeunload', cleanup)
       window.removeEventListener('unload', cleanup)
+      window.removeEventListener('pagehide', cleanup)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [props.meetingId, localStreamId])
 
