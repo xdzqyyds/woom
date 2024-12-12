@@ -210,6 +210,28 @@ async function signup(userId: string, password: string): Promise<{ success: bool
   return response.json()
 }
 
+async function removeStream(streamId: string): Promise<void> {
+  await fetch('/login/remove', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ streamId }),
+  })
+}
+
+async function makeRemove(localStreamId: string): Promise<{ value: number }> {
+  return (await fetch('/login/makeremove', {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ streamId: localStreamId }),
+  })).json()
+}
+
 export {
   setRoomId,
   setApiToken,
@@ -223,6 +245,8 @@ export {
   newStream,
   setStream,
   delStream,
+  removeStream,
+  makeRemove,
 
   login,
   getUserOnlineStatus,

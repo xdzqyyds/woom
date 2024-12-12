@@ -42,6 +42,14 @@ type UpdateUserStatusRequest struct {
 	Status string `json:"status"`
 }
 
+type RemoveStreamRequest struct {
+	StreamId string `json:"streamId"`
+}
+
+type MakeRemoveRequest struct {
+	StreamId string `json:"streamId"`
+}
+
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginReq LoginRequest
 
@@ -233,4 +241,49 @@ func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("New user registered successfully: %s\n", signupReq.UserId)
 	render.JSON(w, r, LoginResponse{Success: true, Message: "Registration successful! You can now login."})
+}
+
+func (h *Handler) RemoveStream(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var req RemoveStreamRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.rdb.SAdd(ctx, model.StreamRemovalKey, req.StreamId).Err(); err != nil {
+		http.Error(w, "Failed to add stream to removal set", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) MakeRemove(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var req MakeRemoveRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	isMember, err := h.rdb.SIsMember(ctx, model.StreamRemovalKey, req.StreamId).Result()
+	if err != nil {
+		http.Error(w, "Failed to check stream removal set", http.StatusInternalServerError)
+		return
+	}
+
+	value := 0
+	if isMember {
+		value = 1
+		if err := h.rdb.SRem(ctx, model.StreamRemovalKey, req.StreamId).Err(); err != nil {
+			http.Error(w, "Failed to remove stream from set", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"value": value})
 }

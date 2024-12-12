@@ -3,6 +3,7 @@ import { useAtom } from 'jotai'
 import {
   locationAtom,
   meetingIdAtom,
+  adminAtom
 } from '../store/atom'
 import { getStorage, setStorage, delStorage, setStorageStream, setStorageMeeting } from '../lib/storage'
 import { newRoom, newUser, setApiToken, setRoomId } from '../lib/api'
@@ -22,6 +23,7 @@ export const getLoginStatus = async () => {
 export default function Join() {
   const [loc, setLoc] = useAtom(locationAtom)
   const [__, setAtomMeetingId] = useAtom(meetingIdAtom)
+  const [_, setAdmin] = useAtom(adminAtom)
   const [tmpId, setTmpId] = useState<string>('')
 
   const newMeeting = async () => {
@@ -29,6 +31,7 @@ export default function Join() {
     const meetingId = (await newRoom()).roomId
     enterMeeting(meetingId)
     setRoomId(meetingId)
+    setAdmin(true)
   }
 
   const joinMeeting = async () => {
@@ -39,6 +42,7 @@ export default function Join() {
     //})
     enterMeeting(meetingId)
     setRoomId(meetingId)
+    setAdmin(false)
   }
 
   const enterMeeting = (meetingId: string) => {

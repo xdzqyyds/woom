@@ -13,7 +13,7 @@ import {
 import copy from 'copy-to-clipboard'
 import SvgDone from './svg/done'
 import SvgEnd from './svg/end'
-import { getRoom, delStream, Stream } from '../lib/api'
+import { getRoom, delStream, Stream, makeRemove } from '../lib/api'
 import { getStorageStream } from '../lib/storage'
 
 export default function Layout(props: { meetingId: string }) {
@@ -38,6 +38,11 @@ export default function Layout(props: { meetingId: string }) {
         return map
       }, {} as { [_: string]: Stream })
     setRemoteUserStatus(r)
+
+    const result = await makeRemove(localStreamId)
+    if (result.value === 1) {
+      await callEnd()
+    }
   }
 
   const callEnd = async () => {

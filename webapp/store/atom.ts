@@ -53,20 +53,21 @@ userPasswordAtom.debugLabel = 'userPasswordAtom'
 const isLoggedInAtom = atom<boolean>(false)
 isLoggedInAtom.debugLabel = 'isLoggedInAtom'
 
+const adminAtom = atom<boolean>(false)
+adminAtom.debugLabel = 'adminAtom'
+
 export {
   locationAtom,
-  presentationStreamAtom,
-
   meetingIdAtom,
   meetingJoinedAtom,
+  presentationStreamAtom,
   enabledPresentationAtom,
   deviceSpeakerAtom,
   speakerStatusAtom,
-
   settingsEnabledScreenAtom,
-
   userIdAtom,
   userPasswordAtom,
+  adminAtom,
   isLoggedInAtom,
 }
 

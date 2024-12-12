@@ -47,6 +47,8 @@ func NewApi(rdb *redis.Client, secret string, live777Url string, live777Token st
 		r.Patch("/login/offline", handle.UpdateUserList)
 		r.Post("/login/invite", handle.Invite)
 		r.Patch("/login/invitee", handle.GetInvitation)
+		r.Post("/login/remove", handle.RemoveStream)
+		r.Patch("/login/makeremove", handle.MakeRemove)
 		r.Post("/room/", handle.CreateRoom)
 		r.Get("/room/{roomId}", handle.ShowRoom)
 		//r.Patch("/room/{roomId}", handle.UpdateRoom)

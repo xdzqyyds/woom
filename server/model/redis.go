@@ -11,6 +11,7 @@ const (
 	UserStorageKey      = "user_storage"
 	UserOnlineStatusKey = "user_online_status"
 	InvitationKey       = "invitation"
+	StreamRemovalKey    = "stream_removal"
 )
 
 func ClearRedis(rdb *redis.Client) {
