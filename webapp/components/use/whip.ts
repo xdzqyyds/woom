@@ -5,9 +5,11 @@ import { WHIPClient } from 'whip-whep/whip'
 import {
   deviceNone,
   deviceScreen,
+  deviceSegmenter,
   asyncGetAudioStream,
   asyncGetVideoStream,
 } from '../../lib/device'
+import { VirtualBackgroundStream } from './imageSegmentation'
 
 interface WHIPData extends Data {
   setUserName: (name: string) => void,
@@ -16,9 +18,11 @@ interface WHIPData extends Data {
   currentDeviceAudio: string,
   currentDeviceVideo: string,
   setCurrentDeviceAudio: (current: string) => Promise<void>,
-  setCurrentDeviceVideo: (current: string) => Promise<void>,
+  setCurrentDeviceVideo: (current: string, constraints?: MediaTrackConstraints) => Promise<void>,
   toggleEnableAudio: () => Promise<void>,
   toggleEnableVideo: () => Promise<void>,
+
+  toggleEnableVirtualBackground: () => Promise<void>
 }
 
 class WHIPContext extends Context {
@@ -27,8 +31,12 @@ class WHIPContext extends Context {
 
   currentDeviceAudio = deviceNone.deviceId
   currentDeviceVideo = deviceNone.deviceId
+  currentVideoConstraints: MediaTrackConstraints | undefined = undefined
   toggleEnableAudio = async () => this.setCurrentDeviceAudio(this.userStatus.audio ? deviceNone.deviceId : this.currentDeviceAudio)
   toggleEnableVideo = async () => this.setCurrentDeviceVideo(this.userStatus.video ? deviceNone.deviceId : this.currentDeviceVideo)
+  toggleEnableVirtualBackground = async () => this.setCurrentDeviceVideo(this.virtualBackgroundEnabled ? this.currentDeviceVideo : deviceSegmenter.deviceId)
+  virtualBackgroundEnabled = false
+  segmentation: VirtualBackgroundStream | null = null
 
   constructor(id: string) {
     super(id)
@@ -67,9 +75,11 @@ class WHIPContext extends Context {
       currentDeviceAudio: this.currentDeviceAudio,
       currentDeviceVideo: this.currentDeviceVideo,
       setCurrentDeviceAudio: (current: string) => this.setCurrentDeviceAudio(current),
-      setCurrentDeviceVideo: (current: string) => this.setCurrentDeviceVideo(current),
+      setCurrentDeviceVideo: (current: string, constraints?: MediaTrackConstraints) => this.setCurrentDeviceVideo(current, constraints),
       toggleEnableAudio: () => this.toggleEnableAudio(),
       toggleEnableVideo: () => this.toggleEnableVideo(),
+
+      toggleEnableVirtualBackground: () => this.toggleEnableVirtualBackground(),
     }
   }
 
@@ -145,17 +155,27 @@ class WHIPContext extends Context {
     })
   }
 
-  async setCurrentDeviceVideo(current: string) {
-    const { stream, setStream, userStatus, currentDeviceVideo } = this
+  async setCurrentDeviceVideo(current: string, constraints?: MediaTrackConstraints) {
+    const { stream, setStream, userStatus, currentDeviceVideo, currentVideoConstraints } = this
 
-    if (current !== currentDeviceVideo || !userStatus.video) {
+    if (current !== currentDeviceVideo || currentVideoConstraints !== constraints || !userStatus.video || this.virtualBackgroundEnabled) {
       // Closed old tracks
       stream.getVideoTracks().map(track => {
         track.stop()
         stream.removeTrack(track)
       })
-
-      const mediaStream = await asyncGetVideoStream(current)
+      let mediaStream: MediaStream
+      if (current === deviceSegmenter.deviceId) {
+        this.virtualBackgroundEnabled = true
+        this.segmentation = new VirtualBackgroundStream(current)
+        mediaStream = await this.segmentation.startStream()
+      } else {
+        this.virtualBackgroundEnabled = false
+        if (this.segmentation) {
+          this.segmentation.destroyStream()
+        }
+        mediaStream = await asyncGetVideoStream(current, constraints)
+      }
       const audioTracks = stream.getAudioTracks()
       const videoTracks = mediaStream.getVideoTracks()
 
@@ -163,7 +183,8 @@ class WHIPContext extends Context {
       userStatus.video = current === deviceNone.deviceId ? false : true
       // NOTE: screen share
       userStatus.screen = current !== deviceScreen.deviceId ? false : true
-      this.currentDeviceVideo = current === deviceNone.deviceId ? this.currentDeviceVideo : current
+      this.currentDeviceVideo = (current === deviceNone.deviceId || current === deviceSegmenter.deviceId || current === deviceScreen.deviceId) ? this.currentDeviceVideo : current
+      this.currentVideoConstraints = constraints
 
       this.sync()
       this.syncUserStatus(userStatus)
@@ -202,7 +223,7 @@ class WHIPContext extends Context {
   async stop() {
     if (this.timer) {
       clearInterval(this.timer)
-      this.timer = null
+      this.timer = undefined
     }
     try {
       await this.client.stop()

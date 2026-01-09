@@ -37,12 +37,8 @@ enabledPresentationAtom.debugLabel = 'enabledPresentation'
 
 const deviceSpeakerAtom = atom<string>('')
 deviceSpeakerAtom.debugLabel = 'deviceSpeaker'
-const speakerStatusAtom = atom<boolean>(true)
+const speakerStatusAtom = atom<boolean>(false)
 speakerStatusAtom.debugLabel = 'speakerStatus'
-
-// Mobile device don't support share screen, For Mobile device default disabled
-const settingsEnabledScreenAtom = atom<boolean>(/Mobi|Android|iPhone|iPad|HarmonyOS|HMSCore/i.test(navigator.userAgent))
-settingsEnabledScreenAtom.debugLabel = 'settingsEnabledScreen'
 
 export {
   locationAtom,
@@ -53,8 +49,6 @@ export {
   enabledPresentationAtom,
   deviceSpeakerAtom,
   speakerStatusAtom,
-
-  settingsEnabledScreenAtom,
 }
 
 export type {

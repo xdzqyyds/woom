@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": "./webapp",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": [""],
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",

@@ -13,6 +13,11 @@ const deviceScreen = {
   label: 'screen',
 }
 
+const deviceSegmenter = {
+  deviceId: 'segmenter',
+  lable: 'segmenter'
+}
+
 async function asyncGetAudioStream(deviceId: string): Promise<MediaStream> {
   let stream: MediaStream = new MediaStream()
   if (deviceId !== 'none') {
@@ -21,14 +26,14 @@ async function asyncGetAudioStream(deviceId: string): Promise<MediaStream> {
   return stream
 }
 
-async function asyncGetVideoStream(deviceId: string): Promise<MediaStream> {
+async function asyncGetVideoStream(deviceId: string, constraints?: MediaTrackConstraints): Promise<MediaStream> {
   let stream: MediaStream = new MediaStream()
   if (deviceId === 'none') {
     /* empty */
   } else if (deviceId === 'screen') {
-    stream = await navigator.mediaDevices.getDisplayMedia({ audio: false, video: { height: 720 } })
+    stream = await navigator.mediaDevices.getDisplayMedia({ audio: false, video: constraints ?? { height: 720 } })
   } else {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { height: 480, deviceId: deviceId } })
+    stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: constraints ?? { height: 480, deviceId: deviceId } })
   }
   return stream
 }
@@ -38,6 +43,7 @@ export {
   asyncGetVideoStream,
   deviceNone,
   deviceScreen,
+  deviceSegmenter,
 }
 
 export type {

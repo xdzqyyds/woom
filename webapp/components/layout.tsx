@@ -15,6 +15,7 @@ import SvgDone from './svg/done'
 import SvgEnd from './svg/end'
 import { getRoom, delStream, Stream } from '../lib/api'
 import { getStorageStream } from '../lib/storage'
+import useWhipClient from './use/whip'
 
 export default function Layout(props: { meetingId: string }) {
   const [copyStatus, setCopyStatus] = useState(false)
@@ -28,22 +29,28 @@ export default function Layout(props: { meetingId: string }) {
   const [enabledPresentation] = useAtom(enabledPresentationAtom)
   const [presentationStream] = useAtom(presentationStreamAtom)
 
+  const {stop, setSyncUserStatus} = useWhipClient(localStreamId)
+
   const refresh = async () => {
     const data = (await getRoom(props.meetingId)).streams
-    const r = Object.keys(data)
-      .filter(i => i !== localStreamId)
-      .filter(i => !!i)
-      .reduce((map, i) => {
-        map[i] = data[i]
-        return map
-      }, {} as { [_: string]: Stream })
-    setRemoteUserStatus(r)
+    if (data) {
+      const r = Object.keys(data)
+        .filter(i => i !== localStreamId)
+        .filter(i => !!i)
+        .reduce((map, i) => {
+          map[i] = data[i]
+          return map
+        }, {} as { [_: string]: Stream })
+      setRemoteUserStatus(r)
+    }
   }
 
   const callEnd = async () => {
     delStream(props.meetingId, localStreamId)
 
     setMeetingJoined(false)
+    stop()
+    setSyncUserStatus(() => {})
   }
 
   useEffect(() => {
@@ -92,7 +99,7 @@ export default function Layout(props: { meetingId: string }) {
       <div></div>
 
       {enabledPresentation
-        ? <Player stream={presentationStream.stream} muted={true} width="auto" />
+        ? <Player stream={presentationStream.stream} muted={true} video={true} audio={false} width="auto" self={false}/>
         : null
       }
 

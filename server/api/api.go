@@ -51,6 +51,9 @@ func NewApi(rdb *redis.Client, secret string, live777Url string, live777Token st
 		r.Delete("/room/{roomId}/stream/{streamId}", handle.DestroyRoomStream)
 	})
 
+	r.HandleFunc("/whip/{uuid}", handler(proxy, live777Url, live777Token))
+	r.HandleFunc("/whep/{uuid}", handler(proxy, live777Url, live777Token))
+
 	r.Post("/user/", handle.CreateUser)
 
 	//r.Post("/room/{roomId}/message", handle.CreateMessage)
