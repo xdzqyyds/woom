@@ -40,6 +40,16 @@ deviceSpeakerAtom.debugLabel = 'deviceSpeaker'
 const speakerStatusAtom = atom<boolean>(false)
 speakerStatusAtom.debugLabel = 'speakerStatus'
 
+
+const userIdAtom = atom<string>('')
+userIdAtom.debugLabel = 'userIdAtom'
+
+const userPasswordAtom = atom<string>('')
+userPasswordAtom.debugLabel = 'userPasswordAtom'
+
+const isLoggedInAtom = atom<boolean>(false)
+isLoggedInAtom.debugLabel = 'isLoggedInAtom'
+
 export {
   locationAtom,
   presentationStreamAtom,
@@ -49,6 +59,9 @@ export {
   enabledPresentationAtom,
   deviceSpeakerAtom,
   speakerStatusAtom,
+  userIdAtom,
+  userPasswordAtom,
+  isLoggedInAtom,
 }
 
 export type {

@@ -9,6 +9,19 @@ import { newRoom, newUser, setApiToken, setRoomId } from '../lib/api'
 import { SvgSetting } from './svg/setting'
 import Settings from './settings'
 
+export const getLoginStatus = async () => {
+  const user = getStorage()
+  if (!user.token || !user.stream) {
+    const res = await newUser()
+    user.token = res.token
+    user.stream = res.streamId
+    setStorage(user)
+  }
+
+  setApiToken(user.token)
+  if (user.stream) setStorageStream(user.stream)
+}
+
 export default function Join() {
   const [loc, setLoc] = useAtom(locationAtom)
   const [__, setAtomMeetingId] = useAtom(meetingIdAtom)

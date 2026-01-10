@@ -118,6 +118,27 @@ async function delStream(roomId: string, streamId: string): Promise<any> {
   })
 }
 
+async function login(userId: string, password: string): Promise<{ success: boolean; message: string }> {
+  return (await fetch('/login/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, password }),
+  })).json()
+}
+
+async function signup(userId: string, password: string): Promise<{ success: boolean; message: string }> {
+  const response = await fetch('/login/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, password }),
+  })
+  return response.json()
+}
+
 export {
   setRoomId,
   setApiToken,
@@ -131,6 +152,9 @@ export {
   newStream,
   setStream,
   delStream,
+
+  login,
+  signup,
 
   StreamState,
 }
